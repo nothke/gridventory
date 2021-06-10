@@ -3,6 +3,8 @@ Functions for making a simple grid inventory in Unity
 
 Provides both static functions with which you can build your own inventory, and an easy to use class that wraps those functions and keeps track of added items
 
+![Gridventory](~Documentation/gridventory.gif)
+
 This repo contains a sample with a test scene, but Gridventory.cs is just the core script.
 
 The static functions provide you with ability to:

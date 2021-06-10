@@ -119,6 +119,24 @@ namespace Nothke.Inventory
             else return null;
         }
 
+        public bool TryRemoveItemAt(in Vector2Int tile, out object item, out RectInt rect)
+        {
+            int i = FindItemIndexAt(tile.x, tile.y);
+            if (i >= 0)
+            {
+                item = items[i].item;
+                rect = items[i].rect;
+                RemoveItem(i);
+                return true;
+            }
+            else
+            {
+                item = null;
+                rect = default;
+                return false;
+            }
+        }
+
         public bool TryRemoveItemAt(in Vector2Int tile, out object item)
         {
             int i = FindItemIndexAt(tile.x, tile.y);

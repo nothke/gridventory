@@ -209,8 +209,16 @@ namespace Nothke.Inventory
                 Mathf.FloorToInt(position.y / separation));
         }
 
-        public static Vector2Int GetRootTileFromLocalPosition(in Vector3 position, in Vector2Int size, in Vector2Int inventorySize, float separation)
+        public static Vector2Int RotatedItemSize(Vector2Int size, int rotation)
         {
+            return rotation % 2 == 0 ? size : new Vector2Int(size.y, size.x);
+        }
+
+        public static Vector2Int GetRootTileFromLocalPosition(in Vector3 position, Vector2Int size, in Vector2Int inventorySize, float separation, int rotation = 0)
+        {
+            if (rotation > 0)
+                size = RotatedItemSize(size, rotation);
+
             Vector2 extents = (Vector2)size * 0.5f * separation;
             Vector2 pos = (Vector2)position - extents;
 

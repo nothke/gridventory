@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Nothke.Inventory;
+using static Nothke.Inventory.Gridventory;
 
 public class TestGridventory : MonoBehaviour
 {
@@ -23,8 +24,9 @@ public class TestGridventory : MonoBehaviour
 
     void Update()
     {
-        Vector2 v = Gridventory.GetInventoryPositionFromRay(Camera.main.ScreenPointToRay(Input.mousePosition), transform);
-        Vector2Int tile = Gridventory.GetInventoryTileFromLocalPosition(v, separation);
+        Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Vector2 invPos = Gridventory.GetInventoryPositionFromRay(mouseRay, transform);
+        Vector2Int tile = Gridventory.GetInventoryTileFromLocalPosition(invPos, separation);
 
         if (items.Count != 0)
         {
@@ -34,21 +36,21 @@ public class TestGridventory : MonoBehaviour
 
             TestGridventoryItem testItem = items[0];
 
-            Vector2Int itemSize = rotation % 2 == 0 ? testItem.size : new Vector2Int(testItem.size.y, testItem.size.x);
+            Vector2Int itemSize = Gridventory.RotatedItemSize(testItem.size, rotation);
 
-            Vector2Int itemRootTile = Gridventory.GetRootTileFromLocalPosition(v, itemSize, gridventory.size, separation);
+            Vector2Int itemRootTile = Gridventory.GetRootTileFromLocalPosition(invPos, itemSize, gridventory.size, separation);
 
             // Add on left click
             if (Input.GetMouseButton(0))
             {
-                //gridventory.TryAdd(new RectInt(tile, itemSize));
                 if (gridventory.TryInsert(testItem, itemRootTile, rotation))
                 {
-                    Vector3 itemPos = Gridventory.WorldPositionFromInventoryRect(
-                        new RectInt(itemRootTile, itemSize), transform, separation);
-                    testItem.transform.position = itemPos;
-
-                    testItem.transform.rotation = Gridventory.WorldRotationFromInventoryRect(rotation, transform.forward, transform.right);
+                    // Place the item in the inventory
+                    testItem.transform.SetPositionAndRotation(
+                        Gridventory.WorldPositionFromInventoryRect(
+                            new RectInt(itemRootTile, itemSize), transform, separation),
+                        Gridventory.WorldRotationFromInventoryRect(
+                            rotation, transform.forward, transform.right));
 
                     items.RemoveAt(0);
                 }
@@ -73,6 +75,7 @@ public class TestGridventory : MonoBehaviour
             }
         }
 
+        // Draw inventory and current tile
         gridventory.DebugDrawInventory(transform.position, transform.forward, transform.right, separation);
         gridventory.DrawInventoryTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.01f, Color.red);
     }

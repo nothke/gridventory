@@ -14,7 +14,7 @@ The static functions provide you with ability to:
 * Get a world position from any inventory's tile or rect
 
 The Gridventory class instance provides you with the ability to:
-* Insert or remove items that implement IGridventoryItem
+* Insert or remove items
 * Find items by tile
 * Check if a tile or rect is occupied
 

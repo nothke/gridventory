@@ -18,6 +18,10 @@ The Gridventory class instance provides you with the ability to:
 * Find items by tile
 * Check if a tile or rect is occupied
 
+Inventory pivot is in lower left corner:
+
+![Gridventory](~Documentation/pivot_orientation.png)
+
 Limitations:
 * Gridventory is planar (as in, not curved)
 * Gridventory's tiles have equal width and height separation distance

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 using Nothke.Inventory;
@@ -26,21 +25,28 @@ public class TestGridventory : MonoBehaviour
 
     void Update()
     {
+        // Create a ray from camera towards the mouse position
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Cast a ray into the inventory, and use the local inventory position to find the tile we are pointing at
         Vector2 invPos = Gridventory.GetInventoryPositionFromRay(mouseRay, transform);
         Vector2Int tile = Gridventory.GetInventoryTileFromLocalPosition(invPos, separation);
 
+        // Draw the inventory and current tile
+        gridventory.DebugDrawInventory(transform.position, transform.forward, transform.right, separation);
+        gridventory.DebugDrawTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.03f, Color.yellow);
+
         if (itemsStack.Count != 0)
         {
-            // Rotate
+            // Press R to rotate the target item rect.
+            // We use the 0-3 rotation integer to pass it into inventory as a 90 degree multiplier.
             if (Input.GetKeyDown(KeyCode.R))
                 rotation = (rotation + 1) % 4;
 
             TestGridventoryItem testItem = itemsStack.Peek();
 
-
+            // Find the target item rect root tile so that we can use it for insertion calculation
             Vector2Int itemSize = Gridventory.RotatedItemSize(testItem.size, rotation);
-
             Vector2Int itemRootTile = Gridventory.GetRootTileFromLocalPosition(invPos, itemSize, gridventory.size, separation);
 
             // Add on left click
@@ -59,7 +65,7 @@ public class TestGridventory : MonoBehaviour
                 }
             }
 
-            // Drawing:
+            // Draw the rect debug lines, make it green if the space is free, or red if it's occupied
             Color placeColor = gridventory.IsOccupied(new RectInt(itemRootTile, itemSize)) ?
                 Color.red : Color.green;
 
@@ -80,8 +86,6 @@ public class TestGridventory : MonoBehaviour
             }
         }
 
-        // Draw inventory and current tile
-        gridventory.DebugDrawInventory(transform.position, transform.forward, transform.right, separation);
-        gridventory.DebugDrawTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.03f, Color.yellow);
+        
     }
 }

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using Nothke.Inventory;
+﻿using UnityEngine;
 
 public class TestGridventoryItem : MonoBehaviour
 {

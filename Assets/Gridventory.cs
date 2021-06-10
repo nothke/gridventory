@@ -163,21 +163,30 @@ namespace Nothke.Inventory
 
         #region Static functions
 
+        /// <summary>
+        /// Returns a world position of a rect center in an inventory
+        /// </summary>
         public static Vector3 WorldPositionFromInventoryRect(in RectInt rect,
             Transform inventoryTransform, float separation)
         {
-            return WorldPositionFromInventoryRect(rect,
+            return GetWorldPositionAtRectCenter(rect,
                 inventoryTransform.position, inventoryTransform.forward, inventoryTransform.right, separation);
         }
 
-        public static Vector3 WorldPositionFromInventoryRect(in RectInt rect,
+        /// <summary>
+        /// Returns a world position of a rect center in an inventory
+        /// </summary>
+        public static Vector3 GetWorldPositionAtRectCenter(in RectInt rect,
         in Vector3 inventoryPosition, in Vector3 inventoryUp, in Vector3 inventoryRight, float separation)
         {
             Vector2 c = rect.center * separation;
             return inventoryPosition + (inventoryRight * c.x + inventoryUp * c.y);
         }
 
-        public static Quaternion WorldRotationFromInventoryRect(int rotation,
+        /// <summary>
+        /// Returns invenotry world rotation, additionally rotated by a 90 degree multiplier rotation
+        /// </summary>
+        public static Quaternion GetItemWorldRotation(int rotation,
             in Vector3 inventoryUp, in Vector3 inventoryRight)
         {
             Vector3 normal = Vector3.Cross(inventoryRight, -inventoryUp).normalized;
@@ -189,6 +198,11 @@ namespace Nothke.Inventory
                 return Quaternion.AngleAxis(90 * rotation, normal) * rot;
         }
 
+        /// <summary>
+        /// Returns an inventory-space position that the ray points at. The transform pivot is in the lower left corner.
+        /// Pass this value to GetInventoryTileFromLocalPosition to get the tile coordinate.
+        /// </summary>
+        /// <returns></returns>
         public static Vector2 GetInventoryPositionFromRay(
             in Ray ray, Transform inventoryTransform)
         {
@@ -196,6 +210,10 @@ namespace Nothke.Inventory
                 ray, inventoryTransform.position, inventoryTransform.forward, inventoryTransform.right);
         }
 
+        /// <summary>
+        /// Returns an inventory-space position that the ray points at. The pivot is in the lower left corner.
+        /// Pass this value to GetInventoryTileFromLocalPosition to get the tile coordinate.
+        /// </summary>
         public static Vector2 GetInventoryPositionFromRay(
             in Ray ray, in Vector3 inventoryPos,
             in Vector3 inventoryUp, in Vector3 inventoryRight)
@@ -214,6 +232,11 @@ namespace Nothke.Inventory
             return rayPointLS;
         }
 
+        /// <summary>
+        /// Returns the tile coordinate at the inventory-space position.
+        /// </summary>
+        /// <param name="separation">The distance between the tiles</param>
+        /// <returns></returns>
         public static Vector2Int GetInventoryTileFromLocalPosition(in Vector2 position, float separation)
         {
             return new Vector2Int(
@@ -221,6 +244,16 @@ namespace Nothke.Inventory
                 Mathf.FloorToInt(position.y / separation));
         }
 
+        /// <summary>
+        /// Returns the tile coordinate at the root of the rect, which center is at the inventory-space position.
+        /// Use this coordinate for item insertion.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="size"></param>
+        /// <param name="inventorySize"></param>
+        /// <param name="separation">The distance between the tiles</param>
+        /// <param name="rotation">In 0-3 as a 90 degree multiplier</param>
+        /// <returns></returns>
         public static Vector2Int GetRootTileFromLocalPosition(in Vector2 position, Vector2Int size, in Vector2Int inventorySize, float separation, int rotation = 0)
         {
             if (rotation > 0)
@@ -239,6 +272,12 @@ namespace Nothke.Inventory
             return root;
         }
 
+        /// <summary>
+        /// Returns a rotated rect. Rotation is 0-3 as a 90 degree multiplier
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="rotation">In 0-3 as a 90 degree multiplier</param>
+        /// <returns></returns>
         public static Vector2Int RotatedItemSize(Vector2Int size, int rotation)
         {
             return rotation % 2 == 0 ? size : new Vector2Int(size.y, size.x);
@@ -247,15 +286,15 @@ namespace Nothke.Inventory
         #endregion
 
         #region Debug drawing
-        public void DrawInventoryTile(int x, int y,
+        public void DebugDrawTile(int x, int y,
             in Vector3 inventoryPos, in Vector3 inventoryUp, in Vector3 inventoryRight, float separation, float offset, Color color)
         {
             x = Mathf.Clamp(x, 0, size.x - 1);
             y = Mathf.Clamp(y, 0, size.y - 1);
-            DrawTile(x, y, inventoryPos, inventoryUp, inventoryRight, separation, offset, color);
+            DebugDrawTile(x, y, inventoryPos, inventoryUp, inventoryRight, separation, offset, color);
         }
 
-        public static void DrawTile(int x, int y, Vector3 pos, Vector3 up, Vector3 right, float separation, float offset, Color color)
+        public static void DebugDrawTile(int x, int y, Vector3 pos, Vector3 up, Vector3 right, float separation, float offset, Color color)
         {
             Vector3 tileCenter = pos + (up * (y + 0.5f) + right * (x + 0.5f)) * separation;
             Vector3 p0 = tileCenter + (up - right) * (separation - offset) * 0.5f;
@@ -269,13 +308,13 @@ namespace Nothke.Inventory
             Debug.DrawLine(p2, p3, color);
         }
 
-        public static void DrawRect(RectInt rect, Vector3 pos, Vector3 up, Vector3 right, float separation, float offset, Color color)
+        public static void DebugDrawRect(RectInt rect, Vector3 inventoryPos, Vector3 inventoryUp, Vector3 inventoryRight, float separation, float offset, Color color)
         {
             for (int x = rect.x; x < rect.xMax; x++)
             {
                 for (int y = rect.y; y < rect.yMax; y++)
                 {
-                    DrawTile(x, y, pos, up, right, separation, offset, color);
+                    DebugDrawTile(x, y, inventoryPos, inventoryUp, inventoryRight, separation, offset, color);
                 }
             }
         }
@@ -309,7 +348,7 @@ namespace Nothke.Inventory
                         if (index != 0)
                         {
                             Color color = GetColorForIndex(index);
-                            DrawTile(x, y, pos, up, right, separation, 0.05f, color);
+                            DebugDrawTile(x, y, pos, up, right, separation, 0.05f, color);
                             //Debug.DrawRay(mid, Vector3.Cross(up, right) * separation, color);
                         }
                     }

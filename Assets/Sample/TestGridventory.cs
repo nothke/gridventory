@@ -52,7 +52,7 @@ public class TestGridventory : MonoBehaviour
                     testItem.transform.SetPositionAndRotation(
                         Gridventory.WorldPositionFromInventoryRect(
                             new RectInt(itemRootTile, itemSize), transform, separation),
-                        Gridventory.WorldRotationFromInventoryRect(
+                        Gridventory.GetItemWorldRotation(
                             rotation, transform.forward, transform.right));
 
                     itemsStack.Pop();
@@ -63,7 +63,7 @@ public class TestGridventory : MonoBehaviour
             Color placeColor = gridventory.IsOccupied(new RectInt(itemRootTile, itemSize)) ?
                 Color.red : Color.green;
 
-            Gridventory.DrawRect(new RectInt(itemRootTile, itemSize), transform.position, transform.forward, transform.right, separation, 0.02f, placeColor);
+            Gridventory.DebugDrawRect(new RectInt(itemRootTile, itemSize), transform.position, transform.forward, transform.right, separation, 0.02f, placeColor);
         }
 
         // Remove on right click
@@ -82,6 +82,6 @@ public class TestGridventory : MonoBehaviour
 
         // Draw inventory and current tile
         gridventory.DebugDrawInventory(transform.position, transform.forward, transform.right, separation);
-        gridventory.DrawInventoryTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.03f, Color.yellow);
+        gridventory.DebugDrawTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.03f, Color.yellow);
     }
 }

@@ -42,7 +42,7 @@ public class TestGridventory : MonoBehaviour
             // Add on left click
             if (Input.GetMouseButton(0))
             {
-                if (gridventory.TryInsert(testItem, itemRootTile, rotation))
+                if (gridventory.TryInsert(testItem, itemRootTile, testItem.size, rotation))
                 {
                     // Place the item in the inventory
                     testItem.transform.SetPositionAndRotation(
@@ -65,7 +65,7 @@ public class TestGridventory : MonoBehaviour
         // Remove on right click
         if (Input.GetMouseButton(1))
         {
-            if (gridventory.TryRemoveItemAt(tile, out IGridventoryItem item))
+            if (gridventory.TryRemoveItemAt(tile, out object item))
             {
                 var testItem = item as TestGridventoryItem;
                 items.Add(testItem);

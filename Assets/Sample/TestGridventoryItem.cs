@@ -4,10 +4,9 @@ using UnityEngine;
 
 using Nothke.Inventory;
 
-public class TestGridventoryItem : MonoBehaviour, IGridventoryItem
+public class TestGridventoryItem : MonoBehaviour
 {
     public Vector2Int size = new Vector2Int(1, 1);
-    public Vector2Int ItemSize => size;
 
     Vector3 originalPosition;
     Quaternion originalRotation;

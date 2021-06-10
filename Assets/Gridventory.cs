@@ -3,11 +3,6 @@ using UnityEngine;
 
 namespace Nothke.Inventory
 {
-    public interface IGridventoryItem
-    {
-        Vector2Int ItemSize { get; }
-    }
-
     public class Gridventory
     {
         public readonly Vector2Int size;
@@ -18,11 +13,11 @@ namespace Nothke.Inventory
 
         readonly struct SlottedItem
         {
-            readonly public IGridventoryItem item;
+            readonly public object item;
             readonly public RectInt rect;
             readonly public int rotation;
 
-            public SlottedItem(IGridventoryItem item, RectInt rect, int rotation)
+            public SlottedItem(object item, RectInt rect, int rotation)
             {
                 this.item = item;
                 this.rect = rect;
@@ -102,9 +97,9 @@ namespace Nothke.Inventory
             return true;
         }
 
-        public bool TryInsert(IGridventoryItem item, in Vector2Int rootTile, int rotation)
+        public bool TryInsert(object item, in Vector2Int rootTile, in Vector2Int itemSize, int rotation)
         {
-            Vector2Int size = rotation % 2 == 0 ? item.ItemSize : new Vector2Int(item.ItemSize.y, item.ItemSize.x);
+            Vector2Int size = rotation % 2 == 0 ? itemSize : new Vector2Int(itemSize.y, itemSize.x);
             if (TryOccupyRect(new RectInt(rootTile, size)))
             {
                 items[items.Count - 1] = new SlottedItem(item, new RectInt(rootTile, size), rotation);
@@ -114,7 +109,7 @@ namespace Nothke.Inventory
             return false;
         }
 
-        public IGridventoryItem FindItemAt(in Vector2Int tile)
+        public object FindItemAt(in Vector2Int tile)
         {
             int i = FindItemIndexAt(tile.x, tile.y);
             if (i >= 0)
@@ -124,7 +119,7 @@ namespace Nothke.Inventory
             else return null;
         }
 
-        public bool TryRemoveItemAt(in Vector2Int tile, out IGridventoryItem item)
+        public bool TryRemoveItemAt(in Vector2Int tile, out object item)
         {
             int i = FindItemIndexAt(tile.x, tile.y);
             if (i >= 0)

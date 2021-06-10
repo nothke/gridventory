@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Nothke.Inventory;
-using static Nothke.Inventory.Gridventory;
 
 public class TestGridventory : MonoBehaviour
 {

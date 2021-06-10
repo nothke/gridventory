@@ -32,6 +32,9 @@ namespace Nothke.Inventory
 
         public Gridventory(int width, int height, int itemsCapacity = 4)
         {
+            if (width <= 0 || height <= 0)
+                throw new System.Exception("Gridventory does not support 0 or negative sized inventories");
+
             size = new Vector2Int(width, height);
 
             taken = new int[width * height];
@@ -99,11 +102,6 @@ namespace Nothke.Inventory
             return true;
         }
 
-        public bool TryIns<T>(T item) where T : class, IGridventoryItem
-        {
-            return true;
-        }
-
         public bool TryInsert(IGridventoryItem item, in Vector2Int rootTile, int rotation)
         {
             Vector2Int size = rotation % 2 == 0 ? item.ItemSize : new Vector2Int(item.ItemSize.y, item.ItemSize.x);
@@ -168,7 +166,6 @@ namespace Nothke.Inventory
             in Vector3 inventoryUp, in Vector3 inventoryRight)
         {
             Vector3 normal = Vector3.Cross(inventoryRight, -inventoryUp).normalized;
-            Debug.DrawRay(Vector3.zero, normal, Color.yellow, 1);
             Quaternion rot = Quaternion.LookRotation(inventoryUp, normal);
 
             if (rotation == 0)
@@ -196,25 +193,20 @@ namespace Nothke.Inventory
             plane.Raycast(ray, out float enter);
 
             var rayPoint = ray.GetPoint(enter);
-            Debug.DrawRay(rayPoint, normal);
+            //Debug.DrawRay(rayPoint, normal);
             var rayPointLS = mat.inverse.MultiplyPoint3x4(rayPoint);
 
             return rayPointLS;
         }
 
-        public static Vector2Int GetInventoryTileFromLocalPosition(in Vector3 position, float separation)
+        public static Vector2Int GetInventoryTileFromLocalPosition(in Vector2 position, float separation)
         {
             return new Vector2Int(
                 Mathf.FloorToInt(position.x / separation),
                 Mathf.FloorToInt(position.y / separation));
         }
 
-        public static Vector2Int RotatedItemSize(Vector2Int size, int rotation)
-        {
-            return rotation % 2 == 0 ? size : new Vector2Int(size.y, size.x);
-        }
-
-        public static Vector2Int GetRootTileFromLocalPosition(in Vector3 position, Vector2Int size, in Vector2Int inventorySize, float separation, int rotation = 0)
+        public static Vector2Int GetRootTileFromLocalPosition(in Vector2 position, Vector2Int size, in Vector2Int inventorySize, float separation, int rotation = 0)
         {
             if (rotation > 0)
                 size = RotatedItemSize(size, rotation);
@@ -230,6 +222,11 @@ namespace Nothke.Inventory
             root.y = Mathf.Clamp(root.y, 0, inventorySize.y - size.y);
 
             return root;
+        }
+
+        public static Vector2Int RotatedItemSize(Vector2Int size, int rotation)
+        {
+            return rotation % 2 == 0 ? size : new Vector2Int(size.y, size.x);
         }
 
         #endregion

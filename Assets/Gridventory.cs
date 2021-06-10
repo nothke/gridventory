@@ -119,13 +119,14 @@ namespace Nothke.Inventory
             else return null;
         }
 
-        public bool TryRemoveItemAt(in Vector2Int tile, out object item, out RectInt rect)
+        public bool TryRemoveItemAt(in Vector2Int tile, out object item, out RectInt rect, out int rotation)
         {
             int i = FindItemIndexAt(tile.x, tile.y);
             if (i >= 0)
             {
                 item = items[i].item;
                 rect = items[i].rect;
+                rotation = items[i].rotation;
                 RemoveItem(i);
                 return true;
             }
@@ -133,6 +134,7 @@ namespace Nothke.Inventory
             {
                 item = null;
                 rect = default;
+                rotation = 0;
                 return false;
             }
         }
@@ -245,7 +247,6 @@ namespace Nothke.Inventory
         #endregion
 
         #region Debug drawing
-
         public void DrawInventoryTile(int x, int y,
             in Vector3 inventoryPos, in Vector3 inventoryUp, in Vector3 inventoryRight, float separation, float offset, Color color)
         {
@@ -308,7 +309,8 @@ namespace Nothke.Inventory
                         if (index != 0)
                         {
                             Color color = GetColorForIndex(index);
-                            Debug.DrawRay(mid, Vector3.Cross(up, right) * separation, color);
+                            DrawTile(x, y, pos, up, right, separation, 0.05f, color);
+                            //Debug.DrawRay(mid, Vector3.Cross(up, right) * separation, color);
                         }
                     }
                 }

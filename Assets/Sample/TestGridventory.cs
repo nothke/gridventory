@@ -13,12 +13,15 @@ public class TestGridventory : MonoBehaviour
     Gridventory gridventory;
 
     public List<TestGridventoryItem> items;
+    Stack<TestGridventoryItem> itemsStack;
 
     int rotation = 0;
 
     void Start()
     {
         gridventory = new Gridventory(width, height);
+
+        itemsStack = new Stack<TestGridventoryItem>(items);
     }
 
     void Update()
@@ -27,13 +30,14 @@ public class TestGridventory : MonoBehaviour
         Vector2 invPos = Gridventory.GetInventoryPositionFromRay(mouseRay, transform);
         Vector2Int tile = Gridventory.GetInventoryTileFromLocalPosition(invPos, separation);
 
-        if (items.Count != 0)
+        if (itemsStack.Count != 0)
         {
             // Rotate
             if (Input.GetKeyDown(KeyCode.R))
                 rotation = (rotation + 1) % 4;
 
-            TestGridventoryItem testItem = items[0];
+            TestGridventoryItem testItem = itemsStack.Peek();
+
 
             Vector2Int itemSize = Gridventory.RotatedItemSize(testItem.size, rotation);
 
@@ -51,7 +55,7 @@ public class TestGridventory : MonoBehaviour
                         Gridventory.WorldRotationFromInventoryRect(
                             rotation, transform.forward, transform.right));
 
-                    items.RemoveAt(0);
+                    itemsStack.Pop();
                 }
             }
 
@@ -65,17 +69,19 @@ public class TestGridventory : MonoBehaviour
         // Remove on right click
         if (Input.GetMouseButton(1))
         {
-            if (gridventory.TryRemoveItemAt(tile, out object item))
+            if (gridventory.TryRemoveItemAt(tile, out object item, out RectInt _, out int _rot))
             {
                 var testItem = item as TestGridventoryItem;
-                items.Add(testItem);
                 testItem.ReturnToOriginalLocation();
                 Debug.Log("Removed at " + tile);
+
+                rotation = _rot;
+                itemsStack.Push(testItem);
             }
         }
 
         // Draw inventory and current tile
         gridventory.DebugDrawInventory(transform.position, transform.forward, transform.right, separation);
-        gridventory.DrawInventoryTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.01f, Color.red);
+        gridventory.DrawInventoryTile(tile.x, tile.y, transform.position, transform.forward, transform.right, separation, 0.03f, Color.yellow);
     }
 }

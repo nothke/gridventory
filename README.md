@@ -5,7 +5,7 @@ Provides both static functions with which you can build your own inventory, and 
 
 ![Gridventory](~Documentation/gridventory.gif)
 
-This repo contains a sample with a test scene, but Gridventory.cs is just the core script.
+This repo contains a sample with a test scene, but Gridventory.cs is just the core script. See [TestGridventory.cs](Assets/Sample/TestGridventory.cs) for how to use it.
 
 The static functions provide you with ability to:
 * Raycast into the inventory and get a point within it
